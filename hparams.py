@@ -18,7 +18,7 @@ def create_hparams(hparams_string=None, verbose=False):
         ################################
         # Experiment Parameters        #
         ################################
-        epochs=500,
+        epochs=1000,
         iters_per_checkpoint=1000,
         seed=1234,
         dynamic_loss_scaling=True,
@@ -42,16 +42,13 @@ def create_hparams(hparams_string=None, verbose=False):
         # Audio Parameters             #
         ################################
         max_wav_value=32768.0,
-        sampling_rate=48000,
-        filter_length=2400,
-        hop_length=600,
-        win_length=2400,
-        # filter_length=1024,
-        # hop_length=256,
-        # win_length=1024,
+        sampling_rate=22050,
+        filter_length=1024,
+        hop_length=256,
+        win_length=1024,
         n_mel_channels=80,
-        mel_fmin=95.0,
-        mel_fmax=7600.0,
+        mel_fmin=0.0,
+        mel_fmax=8000.0,
 
         ################################
         # Model Parameters             #
