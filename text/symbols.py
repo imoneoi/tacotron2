@@ -1,18 +1,7 @@
-""" from https://github.com/keithito/tacotron """
-
 '''
-Defines the set of symbols used in text input to the model.
+    Pinyin Symbols
+'''
 
-The default is a set of ASCII characters that works well for English or text that has been run through Unidecode. For other data, you can modify _characters. See TRAINING_DATA.md for details. '''
-from text import cmudict
+# Pinyin symbols, sort by descending frequency
 
-_pad        = '_'
-_punctuation = '!\'(),.:;? '
-_special = '-'
-_letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
-
-# Prepend "@" to ARPAbet symbols to ensure uniqueness (some are the same as uppercase letters):
-_arpabet = ['@' + s for s in cmudict.valid_symbols]
-
-# Export all symbols:
-symbols = [_pad] + list(_special) + list(_punctuation) + list(_letters) + _arpabet
+symbols = ['y', 'd', 'sh', 'j', 'l', '.', 'i4', 'zh', 'e5', 'x', 'h', 'b', ',', 'w', 'g', 't', 'm', 'z', 'q', 'u4', 'i2', 'ch', 'i3', 'n', 'f', 'r', 'u2', 'i1', 'k', 'ai4', 's', 'e4', 'ao4', 'a1', 'c', 'ou3', 'p', 'en2', 'u3', 'an4', 'an2', 'ai2', 'ian4', 'e2', 'ing2', 'ang4', 'ong1', 'u1', '"', 'ei4', 'ang2', 'ao3', 'ui4', 'ou4', 'eng2', 'a4', 'ei2', 'uo4', 'uan2', 'ian2', 'an1', 'ang1', 'in1', 'ou2', 'eng1', 'an3', 'e3', 'ong4', 'ing1', 'ian1', 'uo1', 'ong2', 'ing4', 'o3', 'ang3', 'ao1', 'en1', 'a2', 'uo2', 'a3', 'ou1', 'en4', 'ao2', 'iu4', 'eng4', 'i5', 'uan1', 'ai1', 'iao3', 'uan4', 'iao4', 'ian3', 'in2', 'a5', 'ia4', 'ia1', '\\', 'ei3', 'ai3', 'en3', 'e1', 'iang4', 'in4', 'iang1', 'un1', 'iang3', 'uan3', 'ie2', 'ui2', 'er2', 've4', 'ie1', 'iao2', 'un4', '?', 've2', 'iu2', 'ei1', 'ong3', 'en5', 'ing3', 'o2', 'uo3', 'iao1', 'un2', 'ui3', 'iang2', 'ie4', 'eng3', 'uang1', 'ui1', 'ua4', 'in3', 'ie3', 'v3', 'er4', '!', 'uai4', 'uang4', 'ua1', 'u5', 'iu1', 'er5', 'uang2', 'o4', 'iu3', ':', 'un3', 'o1', 'er3', 'ou5', 'o5', 'ua2', 'ai5', 'uang3', 've1', 'v4', 'ang5', 'ia3', 'iong2', 'an5', 'eng5', 'ao5', 'ing5', 'uai2', 'uo5', 'ia2', 'v2', 'ua3', 've3', 'uai1', 'iong1', 'ong5', 'ie5', 'uai3', 'uan5', 'iang5', 'in5', 'iu5', 'ei5', 'un5', 'iong3', 'uang5', 'ia5', 'ua5', 'ian5', 'iao5', 'v5', 'iong5', 'ui5', 'uai5', 've5']

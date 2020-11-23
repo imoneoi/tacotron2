@@ -1,11 +1,20 @@
-import tensorflow as tf
 from text import symbols
+import json
 
+class HParams:
+    def __init__(self, **kwargs):
+        self.__dict__.update(kwargs)
+
+    def parse(self):
+        pass
+
+    def values(self):
+        return json.dumps(self.__dict__, indent=4)
 
 def create_hparams(hparams_string=None, verbose=False):
     """Create model hyperparameters. Parse nondefault from given string."""
 
-    hparams = tf.contrib.training.HParams(
+    hparams = HParams(
         ################################
         # Experiment Parameters        #
         ################################
@@ -14,7 +23,7 @@ def create_hparams(hparams_string=None, verbose=False):
         seed=1234,
         dynamic_loss_scaling=True,
         fp16_run=False,
-        distributed_run=False,
+        distributed_run=True,
         dist_backend="nccl",
         dist_url="tcp://localhost:54321",
         cudnn_enabled=True,
@@ -25,21 +34,24 @@ def create_hparams(hparams_string=None, verbose=False):
         # Data Parameters             #
         ################################
         load_mel_from_disk=False,
-        training_files='filelists/ljs_audio_text_train_filelist.txt',
-        validation_files='filelists/ljs_audio_text_val_filelist.txt',
-        text_cleaners=['english_cleaners'],
+        training_files='filelists/out.train.txt',
+        validation_files='filelists/out.val.txt',
+        text_cleaners=[],
 
         ################################
         # Audio Parameters             #
         ################################
         max_wav_value=32768.0,
-        sampling_rate=22050,
-        filter_length=1024,
-        hop_length=256,
-        win_length=1024,
+        sampling_rate=48000,
+        filter_length=2400,
+        hop_length=600,
+        win_length=2400,
+        # filter_length=1024,
+        # hop_length=256,
+        # win_length=1024,
         n_mel_channels=80,
-        mel_fmin=0.0,
-        mel_fmax=8000.0,
+        mel_fmin=95.0,
+        mel_fmax=7600.0,
 
         ################################
         # Model Parameters             #
@@ -81,15 +93,15 @@ def create_hparams(hparams_string=None, verbose=False):
         learning_rate=1e-3,
         weight_decay=1e-6,
         grad_clip_thresh=1.0,
-        batch_size=64,
+        batch_size=32,
         mask_padding=True  # set model's padded outputs to padded values
     )
 
     if hparams_string:
-        tf.logging.info('Parsing command line hparams: %s', hparams_string)
+        print('Parsing command line hparams: %s', hparams_string)
         hparams.parse(hparams_string)
 
     if verbose:
-        tf.logging.info('Final parsed hparams: %s', hparams.values())
+        print('Final parsed hparams: %s', hparams.values())
 
     return hparams
