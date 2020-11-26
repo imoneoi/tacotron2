@@ -4,7 +4,7 @@ from hparams import create_hparams
 from model import Tacotron2
 from train import load_model
 from text import text_to_sequence
-from text.pinyin_processing import process_line_data, get_autolabeled_prosody, process_autolabeled_text
+from text.preprocessors import FullPreprocessor
 
 import soundfile
 import numpy as np
@@ -21,7 +21,7 @@ from denoiser import Denoiser
 
 MAX_WAV_VALUE = 32767.0
 
-def load_task_list(tasklist_path, out_path, task_repeat=3):
+def load_task_list(tasklist_path, out_path, task_repeat=1):
     f = open(tasklist_path, "r")
     lines = f.readlines()
     f.close()
@@ -46,6 +46,9 @@ def inference(
     waveglow_sigma=0.6,
     waveglow_denoiser_strength=0.1
 ):
+    # Preprocessor
+    preprocessor = FullPreprocessor()
+
     # Load tacotron
     taco_model = load_model(taco_hparams)
     taco_model.load_state_dict(torch.load(taco_checkpoint)['state_dict'])
@@ -68,17 +71,23 @@ def inference(
 
     # Inference
     for task in tqdm(task_list):
+        final_audio = []
         raw_text, out_file = task
 
-        # Split-Concat mechanism
-        final_audio = []
-        raw_text_splitted = raw_text.split("/")
+        # Rule-based split-Concat mechanism used for long sentences
+        raw_text_splitted = [""]
+        for char in raw_text:
+            raw_text_splitted[-1] += char
+            if char in ["。", '！', '.', '!']:
+                raw_text_splitted.append("")
 
         for raw_text_part in raw_text_splitted:
+            # Ignore empty part
+            if not raw_text_part:
+                continue
+
             # Get input text
-            prosody = get_autolabeled_prosody(raw_text_part)
-            text = process_autolabeled_text(raw_text_part)
-            input_text = process_line_data(text, prosody)
+            input_text = preprocessor.preprocess([raw_text_part], [None])[0]
 
             # Get input sequence
             input_seq = torch.tensor(np.array(text_to_sequence(input_text, [])), dtype=torch.long).cuda()
@@ -110,8 +119,8 @@ if __name__ == "__main__":
     parser.add_argument("--task_list", type=str, default="inference_text.txt", help="Path to task list file")
     parser.add_argument("--out_path", type=str, default="inference_result", help="Path to result")
 
-    parser.add_argument("--taco_checkpoint", type=str, default="outdir_remote/checkpoint_19000", help="Tacotron 2 checkpoint")
-    parser.add_argument("--waveglow_checkpoint", type=str, default="../waveglow/checkpoints/waveglow_24000", help="Tacotron 2 checkpoint")
+    parser.add_argument("--taco_checkpoint", type=str, default="outdir_remote/checkpoint_14000", help="Tacotron 2 checkpoint")
+    parser.add_argument("--waveglow_checkpoint", type=str, default="../waveglow/checkpoints/waveglow_112000", help="Waveglow checkpoint")
 
     args = parser.parse_args()
 
