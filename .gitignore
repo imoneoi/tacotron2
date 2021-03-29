@@ -1,6 +1,11 @@
+.vscode/
+
 outdir/
 outdir_remote/
 inference_result/
+inference_text.txt
+
+pretrained/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
