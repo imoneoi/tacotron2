@@ -11,6 +11,7 @@ import numpy as np
 
 import argparse
 import os
+import re
 
 from tqdm import tqdm
 
@@ -75,11 +76,12 @@ def inference(
         raw_text, out_file = task
 
         # Rule-based split-Concat mechanism used for long sentences
-        raw_text_splitted = [""]
-        for char in raw_text:
-            raw_text_splitted[-1] += char
-            if char in ["。", '！', '.', '!']:
-                raw_text_splitted.append("")
+        # raw_text_splitted = [""]
+        # for char in raw_text:
+        #     raw_text_splitted[-1] += char
+        #     if char in ["。", '！', '.', '!']:
+        #         raw_text_splitted.append("")
+        raw_text_splitted = raw_text.split("/")
 
         for raw_text_part in raw_text_splitted:
             # Ignore empty part
@@ -87,7 +89,11 @@ def inference(
                 continue
 
             # Get input text
-            input_text = preprocessor.preprocess([raw_text_part], [None])[0]
+            if raw_text_part[0] == "X":
+                input_text = raw_text_part[1:]
+            else:
+                input_text = preprocessor.preprocess([raw_text_part], [None])[0]
+            print(input_text + "|" + out_file)
 
             # Get input sequence
             input_seq = torch.tensor(np.array(text_to_sequence(input_text, [])), dtype=torch.long).cuda()
@@ -120,7 +126,7 @@ if __name__ == "__main__":
     parser.add_argument("--out_path", type=str, default="inference_result", help="Path to result")
 
     parser.add_argument("--taco_checkpoint", type=str, default="outdir_remote/checkpoint_14000", help="Tacotron 2 checkpoint")
-    parser.add_argument("--waveglow_checkpoint", type=str, default="../waveglow/checkpoints/waveglow_112000", help="Waveglow checkpoint")
+    parser.add_argument("--waveglow_checkpoint", type=str, default="../waveglow/checkpoints/waveglow_288000", help="Waveglow checkpoint")
 
     args = parser.parse_args()
 
